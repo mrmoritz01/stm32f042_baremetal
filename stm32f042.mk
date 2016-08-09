@@ -27,14 +27,16 @@ LDFLAGS = 	-gc-sections
 
 OBJ = $(SRC:.c=.o)
 OBJS = $(patsubst %,$(OUTDIR)/%,$(OBJ))
-include $(COMPILER)/arm-gcc-483.gnu.mak
+
+export PATH:=/c/compiler/arm-none-eabi-5.4/bin:$(PATH)
+CC=arm-none-eabi-gcc
 
 all: clean $(OBJS) $(OUTDIR)/$(TARGET).elf $(OUTDIR)/$(TARGET)
 
 $(OUTDIR)/%.o: %.c
 	@mkdir -p $(OUTDIR)
 	@echo Compiling ${<}...
-	@arm-none-eabi-gcc -c $(CFLAGS) ${<} -o ${@}
+	@$(CC) -c $(CFLAGS) ${<} -o ${@}
 
 ${OUTDIR}/${TARGET}.elf:
 	@echo Linking
