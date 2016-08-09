@@ -1,4 +1,4 @@
-//#include <stdint.h>
+#include "stm32f0xx.h"
 
 //Cortex IRQs
 void SVC_Handler(void);
@@ -10,10 +10,24 @@ void Reset_Handler(void);
 void Hardfault_Handler(void);
 void default_handler(void);
 
+void copy_data(void);
+void bss_zero(void);
+void stm32f0_init(void);
+
 extern int main (void);
 
 /*Linker Symbols*/
 extern unsigned long _stack_end;
+extern unsigned long _bss_start;
+extern unsigned long _bss_end;
+extern unsigned long _rodata_start;
+extern unsigned long _rodata_end;
+extern unsigned long _data_start;
+extern unsigned long _data_end;
+
+unsigned long* dest_p;
+unsigned long* src_p;
+
 
 void* isr_vectors[]  __attribute__ ((section ("vector_table"))) = {
    (void (*)) &_stack_end,
@@ -94,6 +108,12 @@ void SysTick_Handler(void)
 
 void Reset_Handler(void)
 {
+	copy_data();
+	
+	bss_zero();
+	
+	SystemInit();
+	
 	/*call main application entry point*/
 	main();
 }
@@ -102,5 +122,24 @@ void Reset_Handler(void)
 void default_handler(void)
 {
 	
+}
+
+
+/*system helpers*/
+void copy_data(void)
+{
+	dest_p = &_data_start;
+	for(src_p = &_rodata_start; src_p<=&_rodata_end; src_p++)
+	{
+		*dest_p++ = *src_p;
+	}
+}
+
+void bss_zero(void)
+{
+	for(dest_p = &_bss_start; dest_p<=&_bss_end; dest_p++)
+	{
+		*dest_p = 0U;
+	}
 }
   

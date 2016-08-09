@@ -40,9 +40,11 @@ SECTIONS
   .rodata :
   {
     . = ALIGN(4);
-    *(.rodata)  
+    _rodata_start = .;
+	*(.rodata)  
     *(.rodata*)
     . = ALIGN(4);
+	_rodata_end = .;
   } >FLASH
 
   .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH

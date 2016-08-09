@@ -1,13 +1,16 @@
 SRC = 	main.c \
-		startup.c
+		startup.c \
+		system_stm32f0xx.c
 
 OUTDIR=.debug
 TARGET=STM32F042
+FCPU=48000000U
 
 CFLAGS = 	-mthumb \
 			-mcpu=cortex-m0 \
 			-O0 \
 			-D$(TARGET) \
+			-DFCPU=$(FCPU) \
 			-ffunction-sections \
 			-I. \
 			-std=gnu99 \
