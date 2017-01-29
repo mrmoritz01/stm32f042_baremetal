@@ -13,8 +13,8 @@ CFLAGS = 	-mthumb \
 			-DFCPU=$(FCPU) \
 			-ffunction-sections \
 			-I. \
+			-nostartfiles \
 			-std=gnu99 \
-			-nostdlib \
 			-I. \
 			-ffunction-sections\
 			-fdata-sections \
@@ -40,12 +40,12 @@ $(OUTDIR)/%.o: %.c
 
 ${OUTDIR}/${TARGET}.elf:
 	@echo Linking
-	arm-none-eabi-ld -o ${OUTDIR}/${TARGET}.elf $(OBJS) -Tstm32f042f4p6.ld $(LDFLAGS) 
+	arm-none-eabi-gcc -o ${OUTDIR}/${TARGET}.elf $(OBJS) -Tstm32f042f4p6.ld $(CFLAGS) $(LDFLAGS) 
 	
 $(OUTDIR)/$(TARGET): $(OUTDIR)/$(TARGET).elf
 	@echo Finishing
 	arm-none-eabi-objcopy -Obinary $(OUTDIR)/$(TARGET).elf $(OUTDIR)/$(TARGET).bin
-	arm-none-eabi-objdump -S $(OUTDIR)/$(TARGET).elf > $(OUTDIR)/$(TARGET).lss
+	arm-none-eabi-objdump -s -S -D -l -EL -h $(OUTDIR)/$(TARGET).elf > $(OUTDIR)/$(TARGET).lss
 	
 clean:
 	@rm -rf $(OUTDIR)

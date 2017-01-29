@@ -25,11 +25,7 @@ extern unsigned long _rodata_end;
 extern unsigned long _data_start;
 extern unsigned long _data_end;
 
-unsigned long* dest_p;
-unsigned long* src_p;
-
-
-void* isr_vectors[]  __attribute__ ((section ("vector_table"))) = {
+void* isr_vectors[]  __attribute__ ((section (".vector_table"))) = {
    (void (*)) &_stack_end,
    Reset_Handler,
    NMI_Handler,
@@ -127,16 +123,21 @@ void default_handler(void)
 
 /*system helpers*/
 void copy_data(void)
-{
-	dest_p = &_data_start;
-	for(src_p = &_rodata_start; src_p<=&_rodata_end; src_p++)
+{	
+	unsigned long* dest_p;
+	unsigned long* src_p;
+	
+	src_p = &_rodata_start;
+	for(dest_p = &_data_start; dest_p<=&_data_end; dest_p++)
 	{
-		*dest_p++ = *src_p;
+		*dest_p = *src_p++;
 	}
 }
 
 void bss_zero(void)
 {
+	unsigned long* dest_p;
+	
 	for(dest_p = &_bss_start; dest_p<=&_bss_end; dest_p++)
 	{
 		*dest_p = 0U;
